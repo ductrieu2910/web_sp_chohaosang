@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /code/
+
+RewriteRule ^index\.php$ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_FILENAME} !\.php$
+RewriteRule ^ - [L]
+
+RewriteRule ^ index.php [L,QSA]
