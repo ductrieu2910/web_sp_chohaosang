@@ -31,7 +31,7 @@ class FormatDOUBLE
 			$decimal_point = ".";
 			$thousands_sep = ",";
 		}
-		$value = number_format($value, 2, $decimal_point, $thousands_sep);
+		$value = number_format(floatval($value), 2, $decimal_point, $thousands_sep);
 		$value = str_replace($decimal_point."00", "", $value);
 		return $value;
 	}
@@ -52,7 +52,7 @@ class FormatDOUBLE
 			$decimal_point = ".";
 			$thousands_sep = ",";
 		}
-		$value = number_format($value, 2, $decimal_point, $thousands_sep);
+		$value = number_format(floatval($value), 2, $decimal_point, $thousands_sep);
 		$value = str_replace($decimal_point."00", "", $value);
 		return $value;
 	}

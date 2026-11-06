@@ -25,8 +25,8 @@ class AppConfig
 						$this->add($key, $value);
 					}
 				}
+				fclose($file);
 			}
-			fclose($file);
 
 		}
 	}
@@ -48,9 +48,13 @@ class AppConfig
 			{
 				
 			}
+			// PHP 8: fwrite(false, ...) la TypeError neu thu muc session khong ghi duoc
 			$f=fopen($this->path,'w');
-			fwrite($f, $s);
-			fclose($f);
+			if($f)
+			{
+				fwrite($f, $s);
+				fclose($f);
+			}
 		}
 	}
 	function hasKey($key)
@@ -69,7 +73,7 @@ class AppConfig
 		$arr = explode(';', $s);
 		for($i =0; $i<count($arr); $i++)
 		{
-			$index = strpos($arr[$i]);
+			$index = strpos($arr[$i], '=');
 			if($index !== false)
 			{
 				$key = substr($arr[$i], 0, $index);

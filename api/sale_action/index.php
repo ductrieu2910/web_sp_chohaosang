@@ -141,6 +141,11 @@ else if($ac == "checkOut")
 	echo $sale->checkOut($delivery_name, $company_id, $delivery_tel, $delivery_email, $address_id, $delivery_address, $delivery_description, $delivery_date);
 }else if($ac == "addToWishList")
 {
+	$product_id = "";
+	if(isset($_REQUEST['product_id']))
+	{
+		$product_id = $_REQUEST['product_id'];
+	}
 	$product = new Product($appSession);
 	echo $product->addProductWishList($product_id);
 }else if($ac == "addToWishList")

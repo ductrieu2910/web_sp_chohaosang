@@ -2,7 +2,7 @@
 class Currency
 {
 	private $config;
-	private $currentList =[];
+	private $currencyList =[];
 	function __construct($config) 
 	{
 		$this->config = $config;
@@ -102,7 +102,7 @@ class Currency
 				$symbol = $this->currencyList[$i][7];
 				$symbol_position = $this->currencyList[$i][8];
 				
-				$s_value = number_format($value, $decimal_places, $decimal_point, $thousands_sep);
+				$s_value = number_format($value, (int)$decimal_places, (string)$decimal_point, (string)$thousands_sep);
 				if($symbol_position == "l")
 				{
 					$s_value = $symbol.$s_value;
@@ -137,7 +137,7 @@ class Currency
 	}
 	function round($amount)
 	{
-		return $value;
+		return $amount;
 	}
 	
 	function numInWords($num)

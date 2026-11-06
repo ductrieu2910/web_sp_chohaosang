@@ -580,6 +580,7 @@ else if($ac == "barcode"){
 	$dt = $appSession->getTier()->getTable($msg);
 	if($dt->getRowCount() == 0)
 	{
+		$company_id = $appSession->getConfig()->getProperty("company_id");
 		$code = $appSession->getTool()->findReceiptNo($appSession->getTier(), $company_id, "wallet_holder");
 		$code = "VFS".$appSession->getTool()->paddingLeft($code, "0", 6);
 			

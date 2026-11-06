@@ -139,6 +139,11 @@ if($ac == "createFile")
 	}else{
 		$file = fopen($path, "w");
 	}
+	if($file === false)
+	{
+		echo "ERROR";
+		exit();
+	}
 	fwrite($file, $decocedData);
 	fclose($file);
 	echo "OK";

@@ -16,8 +16,8 @@ class FormatPERCENT
 	}
 	function format($value)
 	{
-		
-		$value = $value * 100;
+
+		$value = floatval($value) * 100;
 		
 		$decimal_point = $this->config->getProperty("decimal_point");
 		$thousands_sep = $this->config->getProperty("thousands_sep");
@@ -54,8 +54,8 @@ class FormatPERCENT
 	}
 	function formatWithPlace($value, $decimal_place)
 	{
-		
-		$value = $value * 100;
+
+		$value = floatval($value) * 100;
 		
 		$decimal_point = $this->config->getProperty("decimal_point");
 		$thousands_sep = $this->config->getProperty("thousands_sep");

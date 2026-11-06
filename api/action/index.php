@@ -63,7 +63,7 @@ if($ac == "ir_action_run")
 	}
 	if($action_id == "5258df3f-3873-4961-89cc-3e5b513633f0")
 	{
-		if(URL_SERVICE == null || URL_SERVICE == "")
+		if(SERVICE_URL == null || SERVICE_URL == "")
 		{
 			$id = '';
 			if(isset($_REQUEST['rel_id']))
@@ -120,8 +120,8 @@ if($ac == "ir_action_run")
 				$msg->add("query", $sql);
 				$dt_timesheet_time = $appSession->getTier()->getTable($msg);
 				
-				$fd = date('Y-m-d', strtotime($start_date));
-				$td = date('Y-m-d', strtotime($end_date));
+				$fd = date('Y-m-d', strtotime((string)$start_date));
+				$td = date('Y-m-d', strtotime((string)$end_date));
 					
 				$sql_list = "";
 				$sql_list_count = 0;
@@ -410,7 +410,7 @@ if($ac == "ir_action_run")
 		{
 			$params = $params.$description;
 		}
-		echo $appSession->getTool()->httpPost(URL_SERVICE."action", $params);
+		echo $appSession->getTool()->httpPost(SERVICE_URL."action", $params);
 	}
 	
 	
@@ -472,8 +472,8 @@ if($ac == "hr_timesheet_time")
 		$msg->add("query", $sql);
 		$dt_timesheet_time = $appSession->getTier()->getTable($msg);
 		
-		$fd = date('Y-m-d', strtotime($start_date));
-		$td = date('Y-m-d', strtotime($end_date));
+		$fd = date('Y-m-d', strtotime((string)$start_date));
+		$td = date('Y-m-d', strtotime((string)$end_date));
 			
 		$sql_list = "";
 		$sql_list_count = 0;

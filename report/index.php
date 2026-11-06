@@ -205,7 +205,7 @@
 			}
 		}
 	}
-	$arr = explode(':', $data);
+	$arr = explode(':', (string)$data);
 	$layouts = [];
 	for($i=0; $i<count($arr); $i++)
 	{

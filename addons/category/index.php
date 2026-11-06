@@ -54,7 +54,7 @@ if($search != "")
 }
 
 $sql1 = $sql." AND d5.type='PRODUCT'";
-$sql1 = $sql1." ORDER BY d1.name ASC, d1.sequence ASC, d5.sequence ASC";
+$sql1 = $sql1." ORDER BY d1.name ASC, d1.sequence ASC, d5.sequence ASC, d5.id ASC";
 $msg->add("query", $sql1);
 
 $productList = $appSession->getTier()->getTable($msg);
@@ -62,6 +62,58 @@ $productList = $appSession->getTier()->getTable($msg);
 $product = new Product($appSession);
 
 $productList = $product->countProduct($productList);
+
+// Sắp xếp toàn bộ danh sách rồi mới cắt trang, để thứ tự đúng trên mọi trang
+if ($sort != "") {
+    $sort_keys = [];
+    for ($i = 0; $i < $productList->getRowCount(); $i++) {
+        $sort_name = $productList->getString($i, "name_lg");
+        if ($sort_name == "") {
+            $sort_name = $productList->getString($i, "name");
+        }
+        $sort_keys[] = [$i, $appSession->getTool()->validUrl($sort_name), $productList->getFloat($i, "unit_price"), $productList->getFloat($i, "unit_in_stock") <= 0];
+    }
+    usort($sort_keys, function ($a, $b) use ($sort) {
+        // Hàng hết luôn nằm cuối, sắp xếp riêng trong từng nhóm còn hàng / hết hàng
+        if ($a[3] != $b[3]) {
+            return $a[3] <=> $b[3];
+        }
+        if ($sort == "name") {
+            return strcmp($a[1], $b[1]);
+        }
+        return $sort == "price-asc" ? $a[2] <=> $b[2] : $b[2] <=> $a[2];
+    });
+    $rows = $productList->getData();
+    $sorted_rows = [];
+    foreach ($sort_keys as $key) {
+        $sorted_rows[] = $rows[$key[0]];
+    }
+    $productList->setData($sorted_rows);
+}
+
+// Cắt trang bằng PHP, không dùng LIMIT: countProduct() tính tồn kho và đẩy hàng hết về cuối sau khi truy vấn
+$page_size = 12;
+$product_total = $productList->getRowCount();
+$page_count = max(1, (int)ceil($product_total / $page_size));
+$page_no = min($page_no, $page_count);
+$page_offset = ($page_no - 1) * $page_size;
+$productList->setData(array_slice($productList->getData(), $page_offset, $page_size));
+
+function listingPageUrl($base, $search, $sort, $page_no)
+{
+    $params = [];
+    if ($search != "") {
+        $params["search"] = $search;
+    }
+    if ($sort != "") {
+        $params["sort"] = $sort;
+    }
+    if ($page_no > 1) {
+        $params["page"] = $page_no;
+    }
+    $query = http_build_query($params);
+    return htmlspecialchars($base . ($query != "" ? "?" . $query : "") . "#listing-results");
+}
 
 ?>
 
@@ -142,7 +194,7 @@ $filter_action = strtok($_SERVER['REQUEST_URI'], '?');
         <div class="listing-filter">
             <p class="listing-filter-label">1. Chọn theo nhóm sản phẩm:</p>
             <ul class="filter-chips">
-                <li><a class="filter-chip<?php if ($selected_id == "") { echo " is-active"; } ?>" href="<?php echo URL; ?>"<?php if ($selected_id == "") { echo ' aria-current="page"'; } ?>>Tất cả<?php if ($selected_id == "") { echo " (" . $productList->getRowCount() . ")"; } ?></a></li>
+                <li><a class="filter-chip<?php if ($selected_id == "") { echo " is-active"; } ?>" href="<?php echo URL; ?>"<?php if ($selected_id == "") { echo ' aria-current="page"'; } ?>>Tất cả<?php if ($selected_id == "") { echo " (" . $product_total . ")"; } ?></a></li>
                 <?php
                 for ($i = 0; $i < $dt_category->getRowCount(); $i++) {
                     if ($dt_category->getString($i, "parent_id") != "") {
@@ -172,23 +224,23 @@ $filter_action = strtok($_SERVER['REQUEST_URI'], '?');
             <?php } ?>
 
             <div class="listing-tools">
-                <form class="listing-search" action="<?php echo htmlspecialchars($filter_action); ?>" method="get" role="search">
+                <form class="listing-search" id="listing-search-form" action="<?php echo htmlspecialchars($filter_action); ?>" method="get" role="search">
                     <i class="fas fa-search" aria-hidden="true"></i>
                     <label class="sr-only" for="listing-search-input"><?php echo $appSession->getLang()->find("Search for Products");?></label>
                     <input type="search" id="listing-search-input" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Tìm theo tên hoặc mã sản phẩm...">
                 </form>
                 <div class="listing-sort">
                     <label class="sr-only" for="listing-sort-select">Sắp xếp</label>
-                    <select id="listing-sort-select" class="listing-select" onchange="sortListing(this.value)">
+                    <select id="listing-sort-select" class="listing-select" name="sort" form="listing-search-form" onchange="this.form.submit()">
                         <option value="">Sắp xếp: Mặc định</option>
-                        <option value="name">Tên: A → Z</option>
-                        <option value="price-asc">Giá: thấp → cao</option>
-                        <option value="price-desc">Giá: cao → thấp</option>
+                        <option value="name"<?php if ($sort == "name") { echo " selected"; } ?>>Tên: A → Z</option>
+                        <option value="price-asc"<?php if ($sort == "price-asc") { echo " selected"; } ?>>Giá: thấp → cao</option>
+                        <option value="price-desc"<?php if ($sort == "price-desc") { echo " selected"; } ?>>Giá: cao → thấp</option>
                     </select>
                 </div>
             </div>
 
-            <p class="listing-count"><i class="fas fa-sliders-h" aria-hidden="true"></i> Hiển thị <strong><?php echo $productList->getRowCount(); ?></strong> sản phẩm<?php if ($search != "") { echo ' cho “' . htmlspecialchars($search) . '”'; } ?></p>
+            <p class="listing-count" id="listing-results"><i class="fas fa-sliders-h" aria-hidden="true"></i> Hiển thị <?php if ($page_count > 1) { ?><strong><?php echo ($page_offset + 1) . "–" . ($page_offset + $productList->getRowCount()); ?></strong> / <strong><?php echo $product_total; ?></strong><?php } else { ?><strong><?php echo $product_total; ?></strong><?php } ?> sản phẩm<?php if ($search != "") { echo ' cho “' . htmlspecialchars($search) . '”'; } ?></p>
         </div>
 
                 <div class="row product-list" id="listing-grid">
@@ -242,7 +294,7 @@ $filter_action = strtok($_SERVER['REQUEST_URI'], '?');
 						
 
                     ?>
-                    <div class="col-sm-6 col-lg-4 col-xl-3" data-name="<?php echo htmlspecialchars($name); ?>" data-price="<?php echo $unit_price; ?>">
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
                         <div class="product-item">
 						<?php
 							if($sticker != "")
@@ -327,20 +379,34 @@ $filter_action = strtok($_SERVER['REQUEST_URI'], '?');
                     ?>
 
                 </div>
+
+                <?php if ($page_count > 1) { ?>
+                <nav class="listing-pagination" aria-label="Phân trang sản phẩm">
+                    <?php if ($page_no > 1) { ?>
+                    <a class="pager-item" href="<?php echo listingPageUrl($filter_action, $search, $sort, $page_no - 1); ?>" rel="prev" aria-label="Trang trước"><i class="fas fa-chevron-left" aria-hidden="true"></i></a>
+                    <?php } ?>
+                    <?php
+                    $page_prev = 0;
+                    for ($n = 1; $n <= $page_count; $n++) {
+                        if ($n != 1 && $n != $page_count && abs($n - $page_no) > 1) {
+                            continue;
+                        }
+                        if ($n - $page_prev > 1) {
+                            echo '<span class="pager-gap" aria-hidden="true">…</span>';
+                        }
+                        $page_prev = $n;
+                        if ($n == $page_no) {
+                            echo '<span class="pager-item is-active" aria-current="page">' . $n . '</span>';
+                        } else {
+                            echo '<a class="pager-item" href="' . listingPageUrl($filter_action, $search, $sort, $n) . '">' . $n . '</a>';
+                        }
+                    }
+                    ?>
+                    <?php if ($page_no < $page_count) { ?>
+                    <a class="pager-item" href="<?php echo listingPageUrl($filter_action, $search, $sort, $page_no + 1); ?>" rel="next" aria-label="Trang sau"><i class="fas fa-chevron-right" aria-hidden="true"></i></a>
+                    <?php } ?>
+                </nav>
+                <?php } ?>
     </div>
 </section>
-<script>
-function sortListing(mode) {
-    var grid = document.getElementById('listing-grid');
-    var items = Array.prototype.slice.call(grid.querySelectorAll('[data-price]'));
-    items.forEach(function (el, i) { if (el.dataset.order === undefined) { el.dataset.order = i; } });
-    items.sort(function (a, b) {
-        if (mode === 'name') { return a.dataset.name.localeCompare(b.dataset.name, 'vi'); }
-        if (mode === 'price-asc') { return parseFloat(a.dataset.price) - parseFloat(b.dataset.price); }
-        if (mode === 'price-desc') { return parseFloat(b.dataset.price) - parseFloat(a.dataset.price); }
-        return a.dataset.order - b.dataset.order;
-    });
-    items.forEach(function (el) { grid.appendChild(el); });
-}
-</script>
 <!-- page-content -->

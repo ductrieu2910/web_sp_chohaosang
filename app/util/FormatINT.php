@@ -16,7 +16,7 @@ class FormatINT
 	}
 	function format($value)
 	{
-		return number_format($value, 0, $this->config->getProperty("thousands_sep"), $this->config->getProperty("decimal_point"));
+		return number_format(floatval($value), 0,$this->config->getProperty("thousands_sep"), $this->config->getProperty("decimal_point"));
 	}
 }
 

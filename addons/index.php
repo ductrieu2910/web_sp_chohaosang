@@ -28,6 +28,8 @@ if ($uri != '/' && $uri != '') {
 	}
 }
 $search = "";
+$sort = "";
+$page_no = 1;
 $arr = $appSession->getTool()->split($PARAMS, '&');
 
 for($i =0; $i<count($arr); $i++)
@@ -43,6 +45,14 @@ for($i =0; $i<count($arr); $i++)
 		{
 			$search = $v;
 
+		}
+		else if($k == "sort" && in_array($v, ["name", "price-asc", "price-desc"], true))
+		{
+			$sort = $v;
+		}
+		else if($k == "page")
+		{
+			$page_no = max(1, intval($v));
 		}
 	}
 }
@@ -225,7 +235,7 @@ $productList = $sale->productList();
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap">
     <?php
     $theme_base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/';
-    $theme_version = '24';
+    $theme_version = '25';
     ?>
     <link rel="stylesheet" href="<?php echo $theme_base; ?>assets/css/theme-tokens.css?v=<?php echo $theme_version; ?>">
     <link rel="stylesheet" href="<?php echo $theme_base; ?>assets/css/theme-legacy-colors.css?v=<?php echo $theme_version; ?>">

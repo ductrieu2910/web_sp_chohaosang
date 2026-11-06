@@ -238,10 +238,10 @@ for($i =0; $i<count($arr_params); $i++)
 		}
 		else if($arr[0] == "p")
 		{
-			$p = $arr[1];
+			$p = intval($arr[1]);
 		}else if($arr[0] == "ps")
 		{
-			$ps = $arr[1];
+			$ps = max(1, intval($arr[1]));
 		}else if($arr[0] == "rel_id")
 		{
 			$rel_id = $arr[1];

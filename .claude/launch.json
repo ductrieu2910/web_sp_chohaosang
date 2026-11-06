@@ -1,11 +1,17 @@
 {
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "php-router",
-      "runtimeExecutable": "D:/xampp/php/php.exe",
-      "runtimeArgs": ["-S", "127.0.0.1:8099", "-t", "D:/xampp/htdocs/code", "C:/Users/Lenovo/AppData/Local/Temp/claude/D--xampp-htdocs-code/9c0ba4f6-b566-4116-8bc8-acd026f9e651/scratchpad/router.php"],
-      "port": 8099
-    }
-  ]
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "php-router",
+            "runtimeExecutable": "D:/xampp/php/php.exe",
+            "runtimeArgs": [
+                "-S",
+                "127.0.0.1:8099",
+                "-t",
+                "D:/xampp/htdocs/code",
+                "C:/Users/Lenovo/AppData/Local/Temp/claude/D--xampp-htdocs-code/9c0ba4f6-b566-4116-8bc8-acd026f9e651/scratchpad/router.php"
+            ],
+            "port": 8099
+        }
+    ]
 }

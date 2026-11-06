@@ -54,7 +54,7 @@ class Message
 			{
 				$message = $message."&";
 			}
-			$message = $message.$this->datas[$i][0]."=".urlencode($this->datas[$i][1]);
+			$message = $message.$this->datas[$i][0]."=".urlencode((string)$this->datas[$i][1]);
 		}
 		return $message;
 	}

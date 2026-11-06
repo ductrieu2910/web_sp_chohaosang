@@ -8,7 +8,7 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
  *
  * @author xonv
  */
-<?php require_once(ABSPATH."vnpay_php/config.php"); ?>
+require_once(ABSPATH."vnpay_php/config.php");
 
 $vnp_TxnRef = $_POST['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
 $vnp_OrderInfo = $_POST['order_desc'];

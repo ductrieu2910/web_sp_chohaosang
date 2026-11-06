@@ -49,7 +49,8 @@ class Tool
 		 return $uuid;
 	}
 	public function validUrl($str) {
-		  $str = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", 'a', $str);             
+		  $str = (string)$str;
+		  $str = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", 'a', $str);
 		  $str = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", 'e', $str);             
 		  $str = preg_replace("/(ì|í|ị|ỉ|ĩ)/", 'i', $str);             
 		  $str = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/", 'o', $str);             
@@ -139,11 +140,11 @@ class Tool
 	}
 	public function urlEncode($s)
 	{
-		return urlencode($s);
+		return urlencode((string)$s);
 	}
 	public function urlDecode($s)
 	{
-		return urldecode($s);
+		return urldecode((string)$s);
 	}
 	public function selectDistinct($values, $indexes)
 	{
@@ -193,7 +194,7 @@ class Tool
 	}
 	public function padLeft($val, $num, $ch)
 	{
-		return str_pad($val, $num, $ch, STR_PAD_LEFT);
+		return str_pad((string)$val, $num, $ch, STR_PAD_LEFT);
 	}
 	
 	public function sendWS($host, $port, $message)
@@ -237,11 +238,11 @@ class Tool
 	}
 	public function base64Decode($s)
 	{
-		return base64_decode($s);
+		return base64_decode((string)$s);
 	}
 	public function getMime($ex)
 	{
-		$ex = strtolower($ex);
+		$ex = strtolower((string)$ex);
 		
 		if($ex == "bmp") return "image/bmp";
 		if($ex == "fif") return "image/fif";
@@ -287,14 +288,15 @@ class Tool
 
 	public function split($s, $c)
 	{
-		return explode( $c, $s);
+		return explode( $c, (string)$s);
 	}
 	public function trim($s)
 	{
-		return trim($s);
+		return trim((string)$s);
 	}
 	public function substring($s, $start, $length =-1)
 	{
+		$s = (string)$s;
 		if($length == -1)
 		{
 			return substr($s, $start);
@@ -309,7 +311,7 @@ class Tool
 		{
 			return -1;
 		}
-		$index = strpos ($s, $c);
+		$index = strpos ((string)$s, $c);
 		if($index !==false)
 		{
 			return $index;
@@ -318,7 +320,7 @@ class Tool
 	}
 	public function lastIndexOf($s, $c)
 	{
-		$index = strrpos ($s, $c);
+		$index = strrpos ((string)$s, $c);
 		if($index !==false)
 		{
 			return $index;
@@ -413,6 +415,7 @@ class Tool
 		{
 			return "1";
 		}
+		$value = (string)$value;
 		$arr = str_split($value);
 		$num = "";
 		$a = "";
@@ -446,15 +449,15 @@ class Tool
 	}
 	function toHash($type, $s)
 	{
-		return hash($type, $s);
+		return hash($type, (string)$s);
 	}
 	function lenght($s)
 	{
-		return strlen($s);
+		return strlen((string)$s);
 	}
 	function len($s)
 	{
-		return strlen($s);
+		return strlen((string)$s);
 	}
 	function addAtt(&$list, $group, $name, $value)
 	{
@@ -494,10 +497,10 @@ class Tool
 	}
 	function replace($s, $find, $with)
 	{
-		return str_replace($find, $with, $s);
+		return str_replace($find, $with ?? "", $s ?? "");
 	}
 	function clean($string) {
-		$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+		$string = str_replace(' ', '-', (string)$string); // Replaces all spaces with hyphens.
 		return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
 	}
 	function findReceiptNo($mTier, $company_id, $receipt_no )
@@ -570,7 +573,7 @@ class Tool
 				{
 					$s = $s."\t";
 				}
-				$value = $dt->getStringAt($r, $i);
+				$value = (string)$dt->getStringAt($r, $i);
 				$value = str_replace("\n", "", $value);
 				$value = str_replace("\t", "", $value);
 				$s = $s.$value;
@@ -617,6 +620,9 @@ class Tool
 				$tn_height = $max_height;
 		}
 
+		// PHP 8.1+: truyen so thuc co phan le vao tham so int bi deprecated
+		$tn_width = (int)$tn_width;
+		$tn_height = (int)$tn_height;
 		$tmp = imagecreatetruecolor($tn_width,$tn_height);
 
 		imagecopyresampled($tmp,$src,0,0,0,0,$tn_width, $tn_height,$width,$height);
@@ -693,7 +699,9 @@ class Tool
 	{
 		$s = [];
 		$sql = "SELECT id, parent_id FROM res_company WHERE status =0 AND parent_id='".$id."'";
-		$result = $appSession->getTier()->getArray($sql);
+		$msg = $appSession->getTier()->createMessage();
+		$msg->add("query", $sql);
+		$result = $appSession->getTier()->getArray($msg);
 		for($i=0; $i<count($result); $i++)
 		{
 			
@@ -727,6 +735,7 @@ class Tool
 		{
 			$ch = "0";
 		}
+		$s = (string)$s;
 		while(true){
 			if(strlen($s)<$len)
 			{

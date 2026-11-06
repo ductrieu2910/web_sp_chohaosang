@@ -13,14 +13,7 @@ class DataRow
 	}
 	function setValue($value, $rowIndex, $columnName)
 	{
-		for($i =0; $i<count($columns); $i++)
-		{
-			if($columns[$i]->getName() == $columnName)
-			{
-				$this->table->setValueAt($value, $this->index, $i);
-			}
-			break;
-		}
+		$this->table->setValue($value, $this->index, $columnName);
 	}
 	function getValueAt($columnIndex)
 	{
@@ -37,7 +30,7 @@ class DataRow
 	}
 	function getInt($columName)
 	{
-		return $this->table->getIntAt($this->index, $columnName);
+		return $this->table->getInt($this->index, $columName);
 	}
 	function getFloatAt($rowIndex, $columnIndex)
 	{
@@ -57,12 +50,12 @@ class DataRow
 	}
 	function getStringAt($columnIndex)
 	{
-		return $this->table->getValueAt($this->index, $columnIndex);
+		return $this->table->getStringAt($this->index, $columnIndex);
 	}
 	function getString($columnName)
 	{
-		
-		return $this->table->getValue($this->index, $columnName);
+
+		return $this->table->getString($this->index, $columnName);
 	}
 }
 

@@ -24,7 +24,7 @@ if(count($arr)>0)
 	$resource = $arr[0][1];
 	$path = ABSPATH."log/".$resource_id.".php";
 	$myfile = fopen(ABSPATH."log/".$resource_id.".php", "w");
-	fwrite($myfile, $resource);
+	fwrite($myfile, (string)$resource);
 	fclose($myfile);
 	include($path);
 	

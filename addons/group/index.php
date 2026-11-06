@@ -143,7 +143,7 @@ $productList = $product->productByGroupById($appSession, $selected_id, -1);
 										$price_id = $price_id_cust;
 										$unit_id = $productList->getString($i, "unit_id_cust");
 										$currnecy_id = $productList->getString($i, "currency_id_cust");
-										$unit_price = $productList->getString($i, "unit_price_cust");
+										$unit_price = $productList->getFloat($i, "unit_price_cust");
 									}
 									
 									$price_id_cat = $productList->getString($i, "price_id_cat");
@@ -151,7 +151,7 @@ $productList = $product->productByGroupById($appSession, $selected_id, -1);
 										$price_id = $price_id_cat;
 										$currnecy_id = $productList->getString($i, "currency_id_cat");
 										$unit_id = $productList->getString($i, "unit_id_cat");
-										$unit_price = $productList->getString($i, "unit_price_cat");
+										$unit_price = $productList->getFloat($i, "unit_price_cat");
 									}
                     ?>
 

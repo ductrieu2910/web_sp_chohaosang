@@ -303,7 +303,7 @@ $dt_user = $appSession->getTier()->getTable($msg);
 	$end_date = date("Y-m-d")." 23:59:59"; 
 	$resource = "";	
 	$module_id = "project_task";
-	$task_id = $task->addTask($appSession, "", $name, $start_date, $end_date, 0, "", 0, $rel_id, "", "", "", $description, $resource, module_id, "", $appSession->getUserInfo()->getId(), ""); 
+	$task_id = $task->addTask($appSession, "", $name, $start_date, $end_date, 0, "", 0, $rel_id, "", "", "", $description, $resource, $module_id, "", $appSession->getUserInfo()->getId(), ""); 
 	if($task_id != "")
 	{
 		$assign_id = $appSession->getTool()->getId();

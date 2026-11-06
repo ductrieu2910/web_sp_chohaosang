@@ -52,7 +52,7 @@ class DataTier
 	public function condition_array($condition)
 	{
 		$arr = [];
-		$conditions = explode(',', $condition);
+		$conditions = explode(',', (string)$condition);
 		for($i =0; $i<count($conditions); $i++)
 		{
 			if($conditions[$i] != "")
@@ -67,6 +67,7 @@ class DataTier
 				$logic = "";
 				$type = "";
 				$caption = "";
+				$o = "";
 				$lines = $this->split( $conditions[$i], ';');
 				for($j=0; $j<count($lines); $j++)
 				{
@@ -344,7 +345,7 @@ class DataTier
 					}
 				}
 			
-				$data = explode(';', $line[$i][3]);
+				$data = explode(';', (string)$line[$i][3]);
 				for($j=0; $j<count($data); $j++)
 				{
 					if($data[$j] != "")
@@ -496,7 +497,7 @@ class DataTier
 			}
 			else
 			{
-				$sql = $sql."'".str_replace("'", "''", $builder->getData()[$i][1]). "'";
+				$sql = $sql."'".str_replace("'", "''", (string)$builder->getData()[$i][1]). "'";
 			}
 			
 		}
@@ -543,7 +544,7 @@ class DataTier
 			}
 			else
 			{
-				$sql = $sql."'".str_replace("'", "''", $builder->getData()[$i][1]). "'";
+				$sql = $sql."'".str_replace("'", "''", (string)$builder->getData()[$i][1]). "'";
 			}
 		}
 		

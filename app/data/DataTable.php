@@ -67,7 +67,8 @@ class DataTable
 	}
 	function getValueAt($rowIndex, $columnIndex)
 	{
-		if(count($this->datas)>=$rowIndex && count($this->datas[$rowIndex])>=$columnIndex)
+		// PHP 8: count(null) la TypeError khi hang khong ton tai (vd: bang rong)
+		if(isset($this->datas[$rowIndex]) && array_key_exists($columnIndex, $this->datas[$rowIndex]))
 		{
 			return $this->datas[$rowIndex][$columnIndex];
 		}
@@ -94,13 +95,14 @@ class DataTable
 		$this->setValue($value, $rowIndex, $columnName);
 	}
 	
+	// PHP 8.1+: truyen NULL cua DB vao ham chuoi (htmlspecialchars, str_replace...) bi deprecated
 	function getStringAt($rowIndex, $columnIndex)
 	{
-		return $this->getValueAt($rowIndex, $columnIndex);
+		return $this->getValueAt($rowIndex, $columnIndex) ?? "";
 	}
 	function getString($rowIndex, $columnName)
 	{
-		return $this->getValue($rowIndex, $columnName);
+		return $this->getValue($rowIndex, $columnName) ?? "";
 	}
 	function getIntAt($rowIndex, $columnIndex)
 	{
@@ -142,18 +144,18 @@ class DataTable
 	function getDateAt($rowIndex, $columnIndex)
 	{
 		$s = $this->getValueAt($rowIndex, $columnIndex);
-		return new Date();
+		return (new Tool())->toDateTime($s);
 	}
 	function getDate($rowIndex, $columName)
 	{
-		for($i =0; $i<count($columns); $i++)
+		for($i =0; $i<count($this->columns); $i++)
 		{
-			if($columns[$i]->getName() == $columnName)
+			if($this->columns[$i]->getName() == $columName)
 			{
 				return $this->getDateAt($rowIndex, $i);
 			}
 		}
-		return new Date();
+		return new Date(0, 0, 0, 0, 0, 0, 0);
 	}
 	function getData()
 	{

@@ -630,7 +630,7 @@ if($ac == "login")
 	{
 		$user_id = $_REQUEST['user_id'];
 	}
-	$sql = "SELECT d1.rel_id, d2.partner_id, d1.id FROM res_user_company d1 LEFT OUTER JOIN customer d2 ON(d1.rel_id = d2.id) WHERE d1.user_id='".$user_user_id."'";
+	$sql = "SELECT d1.rel_id, d2.partner_id, d1.id FROM res_user_company d1 LEFT OUTER JOIN customer d2 ON(d1.rel_id = d2.id) WHERE d1.user_id='".$user_id."'";
 	
 	$msg->add("query", $sql);
 	$arr = $appSession->getTier()->getArray($msg);

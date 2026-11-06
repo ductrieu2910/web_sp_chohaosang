@@ -3,6 +3,8 @@ require_once('DataTier.php' );
 set_time_limit(2000); // 
 class PostgreSQLTier extends DataTier
 {
+	public $type = 'postgresql';
+	public $name = '';
 	private $db = NULL;
 	private $host = "localhost";
 	private $port = "5434";
@@ -35,32 +37,53 @@ class PostgreSQLTier extends DataTier
 	}
 	function open()
 	{
-		if($this->db == NULL)
+		if($this->db === NULL)
 		{
-			$this->db = pg_Connect($this->connection);
+			$db = pg_connect($this->connection);
+			if($db !== false)
+			{
+				$this->db = $db;
+			}
 		}
-		
+
 	}
 	function close()
 	{
-		if($this->db != NULL)
+		if($this->db !== NULL)
 		{
 			pg_close($this->db);
+			// PHP 8.1+: goi pg_close lan hai tren ket noi da dong se nem Error
+			$this->db = NULL;
 		}
-		
+
 	}
-	
+	// PHP 8: truyen false vao cac ham pg_* la TypeError, nen moi truy van
+	// deu di qua day va tra ve false khi khong ket noi duoc hoac SQL loi.
+	private function query($msg)
+	{
+		// Mot so noi goi truyen thang chuoi SQL thay vi Message (vd: DataTier::update/insert)
+		$sql = is_string($msg) ? $msg : $msg->get("query");
+		$this->open();
+		if($this->db === NULL)
+		{
+			return false;
+		}
+		return pg_query($this->db, $sql);
+	}
+
 	public function validColumn($name)
 	{
 		return '"'.$name.'"';
 	}
 	function exec($msg)
 	{
-		$sql = $msg->get("query");
-		$this->open();
-		$result = pg_exec($this->db, $sql);
+		$result = $this->query($msg);
+		if($result === false)
+		{
+			return -1;
+		}
 		$error = pg_result_error($result);
-		
+
 		if($error != "")
 		{
 			return -1;
@@ -68,14 +91,16 @@ class PostgreSQLTier extends DataTier
 		//$this->close();
 		return 1;
 	}
-	
+
 	function getValue($msg)
 	{
-		$sql = $msg->get("query");
-		$this->open();
-		$result = pg_exec($this->db, $sql);
-		
-		$numrows = pg_numrows($result);	
+		$result = $this->query($msg);
+		if($result === false)
+		{
+			return "";
+		}
+
+		$numrows = pg_num_rows($result);
 		$value = "";
 		if($numrows>0)
 		{
@@ -87,12 +112,14 @@ class PostgreSQLTier extends DataTier
 	}
 	function getArray($msg)
 	{
-		$sql = $msg->get("query");
-		$this->open();
 		$data = [];
-		$result = pg_exec($this->db, $sql);
-		$numrows = pg_numrows($result);	
-		
+		$result = $this->query($msg);
+		if($result === false)
+		{
+			return $data;
+		}
+		$numrows = pg_num_rows($result);
+
 		$fields = pg_num_fields($result);
 		for($i=0; $i<$numrows; $i++)
 		{
@@ -109,11 +136,13 @@ class PostgreSQLTier extends DataTier
 	}
 	function getTable($msg)
 	{
-		$sql = $msg->get("query");
-		$this->open();
 		$dt = new DataTable("");
-		$result = pg_exec($this->db, $sql);
-		$numrows = pg_numrows($result);	
+		$result = $this->query($msg);
+		if($result === false)
+		{
+			return $dt;
+		}
+		$numrows = pg_num_rows($result);
 		$fields = pg_num_fields($result);
 		for($n =0; $n<$fields; $n++)
 		{

@@ -271,7 +271,7 @@ class Product
 		$sql = $sql.", d5.company_id, d7.commercial_name, d7.name AS company_name, d5.id AS price_id, d8.document_id AS price_document_id, d5.description, d11.name AS type_name, 0.0 AS unit_in_stock";
 		$sql = $sql." FROM product d1";
 		$sql = $sql." LEFT OUTER JOIN poster d2 ON(d1.id = d2.rel_id AND d2.publish=1 AND d2.status =0)";
-		$sql = $sql." LEFT OUTER JOIN res_lang_line lg ON(lg.lang_id='".$appSession->getConfig()->getProperty("lang_id")."' AND lg.rel_id = d1.id AND lg.name='product_name' AND lg.status =0)";
+		$sql = $sql." LEFT OUTER JOIN res_lang_line lg ON(lg.lang_id='".$this->appSession->getConfig()->getProperty("lang_id")."' AND lg.rel_id = d1.id AND lg.name='product_name' AND lg.status =0)";
 		$sql = $sql." LEFT OUTER JOIN product_price d5 ON(d1.id = d5.product_id AND d5.status =0 AND d5.publish = 1) LEFT OUTER JOIN product_unit d6 ON(d5.unit_id = d6.id)";
 		$sql = $sql." LEFT OUTER JOIN res_company d7 ON(d5.company_id = d7.id)";
 		$sql = $sql." LEFT OUTER JOIN poster d8 ON(d5.id = d8.rel_id AND d8.publish=1 AND d8.status =0)";
@@ -560,7 +560,6 @@ class Product
 			}
 		}
 		$rows = $productList->getData();
-		$c = count($rows);
 		$columnIndex = 0;
 		for($i =0; $i< $productList->getColumnCount(); $i++)
 		{
@@ -570,22 +569,19 @@ class Product
 				break;
 			}
 		}
-		for ($i = 0; $i < $c; $i++) 
+		// Hàng hết xuống cuối, các dòng còn lại giữ nguyên thứ tự của truy vấn
+		$inStockRows = [];
+		$outOfStockRows = [];
+		foreach ($rows as $row)
 		{
-			$unit_in_stock = $rows[$i][$columnIndex];
-			if($unit_in_stock<=0)
+			if($row[$columnIndex]<=0)
 			{
-			
-				$row = $rows[$i];
-				for($j = $i + 1; $j<count($rows); $j++)
-				{
-					$rows[$i] = $rows[$j];
-				}
-				
-				$rows[count($rows) -1]= $row;
+				$outOfStockRows[] = $row;
+			}else{
+				$inStockRows[] = $row;
 			}
 		}
-		$productList->setData($rows);
+		$productList->setData(array_merge($inStockRows, $outOfStockRows));
 		return $productList;
 	}
 	

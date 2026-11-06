@@ -37,7 +37,7 @@ class Language
 		$arr = explode(';', $s);
 		for($i =0; $i<count($arr); $i++)
 		{
-			$index = strpos($arr[$i]);
+			$index = strpos($arr[$i], '=');
 			if($index !== false)
 			{
 				$key = substr($arr[$i], 0, $index);

@@ -2028,6 +2028,7 @@ textarea:focus-visible {
   margin: var(--space-4) 0 0;
   color: var(--color-text-muted);
   font-size: 14px;
+  scroll-margin-top: 120px;
 }
 
 .product-list > h2 {
@@ -2047,6 +2048,50 @@ textarea:focus-visible {
 .listing-count strong {
   color: var(--color-secondary);
   font-weight: 700;
+}
+
+.listing-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.pager-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap-size);
+  height: var(--tap-size);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color var(--duration-normal) var(--ease), background-color var(--duration-normal) var(--ease), color var(--duration-normal) var(--ease);
+}
+
+a.pager-item:hover {
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.pager-item.is-active {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-weight: 600;
+}
+
+.pager-gap {
+  min-width: 24px;
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 @media (max-width: 767px) {

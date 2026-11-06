@@ -24,7 +24,7 @@ class Status
 	{
 		if($this->appSession->getConfig()->getProperty("service_url") != "")
 		{
-			$appSession->getTool()->httpPost($this->appSession->getConfig()->getProperty("service_url"), $data);
+			$this->appSession->getTool()->httpPost($this->appSession->getConfig()->getProperty("service_url"), $data);
 		}
 	}
 	public function doStatus($id, $table_id, $status_id, $company_id)

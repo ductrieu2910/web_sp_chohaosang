@@ -1,4 +1,11 @@
 <?php
+// Khong in loi PHP ra trang cua khach (Deprecated lam vo giao dien va lo duong dan server).
+// Loi van duoc ghi vao log. Dat developer = "1" trong config.php de hien thi khi debug.
+if(!defined('developer') || developer != "1")
+{
+	ini_set('display_errors', '0');
+	ini_set('log_errors', '1');
+}
 require_once(ABSPATH.'app/AppConfig.php' );
 require_once(ABSPATH.'app/UserInfo.php' );
 require_once(ABSPATH.'app/Tool.php' );

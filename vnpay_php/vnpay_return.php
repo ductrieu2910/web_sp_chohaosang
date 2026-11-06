@@ -47,7 +47,7 @@ if ($secureHash == $vnp_SecureHash)
 				
 				$wallet->add($arr[2], $arr[3],$vnp_Amount/100, $vnp_TransactionNo , $vnp_OrderInfo." - ".$vnp_BankCode);
 				
-				header('Location: '.URl.'account/account/?type=wallet');
+				header('Location: '.URL.'account/account/?type=wallet');
 				exit();
 			}else if($arr[0] == "APP_ORDER" || $arr[0] == "WEB_ORDER")
 			{

@@ -488,10 +488,10 @@ if($ac == "gettable" || $ac == "query")
 			}
 			else if($arr[0] == "p")
 			{
-				$p = $arr[1];
+				$p = intval($arr[1]);
 			}else if($arr[0] == "ps")
 			{
-				$ps = $arr[1];
+				$ps = max(1, intval($arr[1]));
 			}else if($arr[0] == "rel_id")
 			{
 				$rel_id = $arr[1];
@@ -690,7 +690,7 @@ if($ac == "gettable" || $ac == "query")
 	$searchs = [];
 	for($c =0; $c<count($columns); $c++)
 	{
-		if(count($columns[$c])<=2)
+		if(!is_array($columns[$c]) || count($columns[$c])<=2)
 		{
 			continue;
 		}
@@ -869,10 +869,10 @@ if($ac == "gettable" || $ac == "query")
 			}
 			else if($arr[0] == "p")
 			{
-				$p = $arr[1];
+				$p = intval($arr[1]);
 			}else if($arr[0] == "ps")
 			{
-				$ps = $arr[1];
+				$ps = max(1, intval($arr[1]));
 			}else if($arr[0] == "rel_id")
 			{
 				$rel_id = $arr[1];
@@ -1192,10 +1192,10 @@ if($ac == "gettable" || $ac == "query")
 			}
 			else if($arr[0] == "p")
 			{
-				$p = $arr[1];
+				$p = intval($arr[1]);
 			}else if($arr[0] == "ps")
 			{
-				$ps = $arr[1];
+				$ps = max(1, intval($arr[1]));
 			}else if($arr[0] == "rel_id")
 			{
 				$rel_id = $arr[1];
